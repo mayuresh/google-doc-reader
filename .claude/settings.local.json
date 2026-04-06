@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/MAYURESH/AppData/Local/Android/Sdk/platforms/**)",
+      "Read(//c/Program Files/Android/Android Studio/bin/**)",
+      "Bash(curl -sL \"https://github.com/gradle/gradle/raw/v8.9.0/gradle/wrapper/gradle-wrapper.jar\" -o \"C:/Users/MAYURESH/AI-Projects/android-app-1/gradle/wrapper/gradle-wrapper.jar\")",
+      "Bash(gh repo:*)"
+    ]
+  }
+}
