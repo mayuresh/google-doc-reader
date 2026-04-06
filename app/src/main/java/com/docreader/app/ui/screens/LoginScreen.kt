@@ -68,16 +68,27 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(48.dp))
 
-        when (authState) {
-            is AuthState.Loading -> CircularProgressIndicator()
+        when (val state = authState) {
+            is AuthState.SigningIn, is AuthState.NeedsConsent -> {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = if (authState is AuthState.NeedsConsent)
+                        "Waiting for Google approval…"
+                    else
+                        "Signing in…",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                )
+            }
             else -> {
                 Button(onClick = { viewModel.signIn(context) }) {
                     Text("Sign in with Google")
                 }
-                if (authState is AuthState.Error) {
+                if (state is AuthState.Error) {
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = (authState as AuthState.Error).message,
+                        text = state.message,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center

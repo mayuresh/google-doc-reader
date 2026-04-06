@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Open book icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,28 C44,28 36,32 30,38 L30,78 C36,72 44,68 54,68 C64,68 72,72 78,78 L78,38 C72,32 64,28 54,28 Z"/>
+    <path
+        android:fillColor="#BBDEFB"
+        android:pathData="M54,32 C45,32 38,35 32,40 L32,74 C38,69 45,66 54,66 L54,32 Z"/>
+    <path
+        android:fillColor="#E3F2FD"
+        android:pathData="M54,32 L54,66 C63,66 70,69 76,74 L76,40 C70,35 63,32 54,32 Z"/>
+</vector>

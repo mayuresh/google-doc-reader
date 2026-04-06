@@ -58,10 +58,11 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
 
-    // Google Sign-In (Credential Manager — modern API)
+    // Google Sign-In (Credential Manager + Authorization)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.google.identity.googleid)
+    implementation(libs.google.play.services.auth)
 
     // Networking
     implementation(libs.retrofit)
@@ -72,6 +73,7 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.coroutines.play.services) // .await() on GMS Tasks
 
     // Audio playback for TTS
     implementation(libs.media3.exoplayer)
