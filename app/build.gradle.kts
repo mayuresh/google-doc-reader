@@ -75,10 +75,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.coroutines.play.services) // .await() on GMS Tasks
 
-    // Audio playback for TTS
-    implementation(libs.media3.exoplayer)
-    implementation(libs.media3.ui)
-
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

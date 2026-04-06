@@ -1,10 +1,7 @@
 package com.docreader.app.viewmodel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.docreader.app.data.model.CURATED_VOICES
-import com.docreader.app.data.model.DEFAULT_VOICE
 import com.docreader.app.data.model.DocContent
 import com.docreader.app.data.model.TtsVoice
 import com.docreader.app.data.model.toPlainText
@@ -27,15 +24,15 @@ enum class SleepTimerOption(val label: String, val minutes: Int) {
 
 data class VoiceUiState(
     val isPlaying: Boolean = false,
-    val isLoading: Boolean = false,
+    val isLoading: Boolean = false,       // true while engine initialises on first play
     val currentChunkIndex: Int = 0,
     val totalChunks: Int = 0,
-    val selectedVoice: TtsVoice = DEFAULT_VOICE,
-    val availableVoices: List<TtsVoice> = CURATED_VOICES,
+    val availableVoices: List<TtsVoice> = emptyList(),
+    val selectedVoice: TtsVoice? = null,  // null until engine loads voices
     val speedRate: Float = 1.0f,
     val showVoicePanel: Boolean = false,
     val showSleepTimerDialog: Boolean = false,
-    val sleepTimerMinutesRemaining: Int? = null,   // null = no timer active
+    val sleepTimerMinutesRemaining: Int? = null,
     val error: String? = null
 )
 
@@ -50,9 +47,6 @@ class VoiceViewModel(
     private var chunks: List<String> = emptyList()
     private var playbackJob: Job? = null
     private var sleepTimerJob: Job? = null
-
-    // Caller must set this to play audio — injected to avoid Android context in ViewModel
-    var audioPlayer: ((ByteArray) -> Unit)? = null
 
     fun prepare(doc: DocContent) {
         val text = doc.toPlainText()
@@ -72,6 +66,7 @@ class VoiceViewModel(
 
     fun pause() {
         playbackJob?.cancel()
+        ttsEngine.stop()
         _uiState.value = _uiState.value.copy(isPlaying = false, isLoading = false)
         SessionManager.resumeInactivityTimer()
     }
@@ -79,6 +74,7 @@ class VoiceViewModel(
     fun stop() {
         playbackJob?.cancel()
         sleepTimerJob?.cancel()
+        ttsEngine.stop()
         _uiState.value = _uiState.value.copy(
             isPlaying = false,
             isLoading = false,
@@ -90,16 +86,17 @@ class VoiceViewModel(
 
     fun skipForward() {
         val next = _uiState.value.currentChunkIndex + 1
-        if (next < chunks.size) {
-            playbackJob?.cancel()
-            _uiState.value = _uiState.value.copy(currentChunkIndex = next)
-            if (_uiState.value.isPlaying) startPlayback(next)
-        }
+        if (next >= chunks.size) return
+        playbackJob?.cancel()
+        ttsEngine.stop()
+        _uiState.value = _uiState.value.copy(currentChunkIndex = next)
+        if (_uiState.value.isPlaying) startPlayback(next)
     }
 
     fun skipBack() {
         val prev = (_uiState.value.currentChunkIndex - 1).coerceAtLeast(0)
         playbackJob?.cancel()
+        ttsEngine.stop()
         _uiState.value = _uiState.value.copy(currentChunkIndex = prev)
         if (_uiState.value.isPlaying) startPlayback(prev)
     }
@@ -137,7 +134,6 @@ class VoiceViewModel(
                 remaining--
                 _uiState.value = _uiState.value.copy(sleepTimerMinutesRemaining = remaining)
             }
-            // Timer hit zero — stop and logout
             stop()
             onLogout()
         }
@@ -151,39 +147,52 @@ class VoiceViewModel(
     private fun startPlayback(fromChunk: Int) {
         playbackJob?.cancel()
         playbackJob = viewModelScope.launch {
+            // Load voices on first play (engine may not be initialised yet)
+            if (_uiState.value.availableVoices.isEmpty()) {
+                _uiState.value = _uiState.value.copy(isLoading = true)
+                // Trigger engine init by speaking an empty string, then load voices
+                ttsEngine.speak(" ", _uiState.value.selectedVoice ?: fallbackVoice(), 1.0f)
+                val voices = ttsEngine.getAvailableVoices()
+                val defaultVoice = voices.firstOrNull() ?: fallbackVoice()
+                _uiState.value = _uiState.value.copy(
+                    availableVoices = voices,
+                    selectedVoice = _uiState.value.selectedVoice ?: defaultVoice,
+                    isLoading = false
+                )
+            }
+
             var index = fromChunk
             while (index < chunks.size) {
-                _uiState.value = _uiState.value.copy(isLoading = true, currentChunkIndex = index)
                 val state = _uiState.value
-                val result = ttsEngine.synthesise(chunks[index], state.selectedVoice, state.speedRate)
+                val voice = state.selectedVoice ?: fallbackVoice()
+
+                _uiState.value = state.copy(currentChunkIndex = index)
+
+                // speak() suspends until the chunk finishes — no timers needed
+                val result = ttsEngine.speak(chunks[index], voice, state.speedRate)
+
                 result.fold(
-                    onSuccess = { audioBytes ->
-                        _uiState.value = _uiState.value.copy(isLoading = false)
-                        audioPlayer?.invoke(audioBytes)
-                        // Wait for playback to finish before fetching next chunk
-                        // AudioPlayer signals completion via awaitPlaybackComplete()
-                        // For now we estimate duration: ~150 words/min at 1x speed
-                        val words = chunks[index].split(" ").size
-                        val durationMs = (words / (150f * state.speedRate) * 60_000f).toLong()
-                        delay(durationMs)
-                        index++
-                    },
+                    onSuccess = { index++ },
                     onFailure = { e ->
                         _uiState.value = _uiState.value.copy(
-                            isLoading = false,
                             isPlaying = false,
-                            error = "TTS error: ${e.message}"
+                            error = "Voice error: ${e.message}"
                         )
                         SessionManager.resumeInactivityTimer()
                         return@launch
                     }
                 )
             }
+
             // Reached end of document
             _uiState.value = _uiState.value.copy(isPlaying = false, currentChunkIndex = 0)
             SessionManager.resumeInactivityTimer()
         }
     }
+
+    private fun fallbackVoice() = TtsVoice(
+        name = "", displayName = "Default", languageCode = "en-US", gender = null
+    )
 
     override fun onCleared() {
         super.onCleared()

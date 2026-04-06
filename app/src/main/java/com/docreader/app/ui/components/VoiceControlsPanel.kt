@@ -31,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.docreader.app.data.model.CURATED_VOICES
 import com.docreader.app.viewmodel.SleepTimerOption
 import com.docreader.app.viewmodel.VoiceViewModel
 
@@ -129,21 +128,30 @@ fun VoiceControlsPanel(
             }
         }
 
-        // Voice selection chips
-        Spacer(modifier = Modifier.height(8.dp))
-        Text("Voice", style = MaterialTheme.typography.labelMedium)
-        Spacer(modifier = Modifier.height(4.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            CURATED_VOICES.take(4).forEach { voice ->
-                FilterChip(
-                    selected = state.selectedVoice == voice,
-                    onClick = { voiceViewModel.selectVoice(voice) },
-                    label = { Text(voice.displayName.substringBefore(" ("), style = MaterialTheme.typography.bodySmall) }
-                )
+        // Voice selection chips (populated dynamically from device after first play)
+        if (state.availableVoices.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Voice", style = MaterialTheme.typography.labelMedium)
+            Spacer(modifier = Modifier.height(4.dp))
+            androidx.compose.foundation.lazy.LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(state.availableVoices.size) { index ->
+                    val voice = state.availableVoices[index]
+                    FilterChip(
+                        selected = state.selectedVoice == voice,
+                        onClick = { voiceViewModel.selectVoice(voice) },
+                        label = { Text(voice.displayName, style = MaterialTheme.typography.bodySmall) }
+                    )
+                }
             }
+        } else if (state.isLoading) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                "Loading voices…",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+            )
         }
 
         state.error?.let {

@@ -15,7 +15,7 @@ import com.docreader.app.data.repository.DocsRepository
 import com.docreader.app.data.repository.DriveRepository
 import com.docreader.app.navigation.NavGraph
 import com.docreader.app.session.SessionManager
-import com.docreader.app.tts.GoogleCloudTtsEngine
+import com.docreader.app.tts.AndroidTtsEngine
 import com.docreader.app.ui.theme.DocReaderTheme
 import com.docreader.app.viewmodel.AuthState
 import com.docreader.app.viewmodel.AuthViewModel
@@ -40,8 +40,6 @@ class MainActivity : ComponentActivity() {
             .build()
     }
 
-    private val ttsApiKey by lazy { getString(R.string.google_cloud_tts_api_key) }
-
     private val authViewModel by lazy {
         ViewModelProvider(this, simpleFactory { AuthViewModel(AuthRepository(this)) })[AuthViewModel::class.java]
     }
@@ -57,7 +55,7 @@ class MainActivity : ComponentActivity() {
     private val voiceViewModel by lazy {
         ViewModelProvider(this, simpleFactory {
             VoiceViewModel(
-                ttsEngine = GoogleCloudTtsEngine(httpClient, ttsApiKey),
+                ttsEngine = AndroidTtsEngine(applicationContext),
                 onLogout = { runOnUiThread { authViewModel.signOut() } }
             )
         })[VoiceViewModel::class.java]
