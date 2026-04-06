@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocReader — Product Requirements Document</title>
+<style>
+  :root {
+    --primary: #1a73e8;
+    --surface: #fff;
+    --bg: #f8f9fa;
+    --text: #202124;
+    --muted: #5f6368;
+    --border: #dadce0;
+    --tag-bg: #e8f0fe;
+    --tag-text: #1a73e8;
+    --warn-bg: #fef7e0;
+    --warn-text: #b06000;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.7; }
+  .page { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  header { border-bottom: 2px solid var(--primary); padding-bottom: 20px; margin-bottom: 40px; }
+  header h1 { font-size: 28px; color: var(--primary); }
+  header .meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  h2 { font-size: 20px; color: var(--primary); margin: 40px 0 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 16px; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+  h4 { font-size: 14px; font-weight: 600; margin: 16px 0 4px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  p { margin: 8px 0; }
+  ul, ol { padding-left: 20px; margin: 8px 0; }
+  li { margin: 4px 0; }
+  .section-id { display: inline-block; background: var(--tag-bg); color: var(--tag-text); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-right: 8px; font-family: monospace; }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; }
+  th { background: var(--bg); text-align: left; padding: 10px 12px; border: 1px solid var(--border); font-weight: 600; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+  td { padding: 10px 12px; border: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .req-block { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin: 10px 0; }
+  .req-block .req-id { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--tag-text); background: var(--tag-bg); padding: 2px 6px; border-radius: 3px; }
+  .req-block .req-title { font-weight: 600; margin: 6px 0 4px; }
+  .req-block .req-body { color: var(--text); }
+  .req-block ul { margin-top: 6px; }
+  .note { background: var(--warn-bg); border-left: 3px solid #f9a825; padding: 10px 14px; border-radius: 4px; margin: 12px 0; font-size: 14px; color: var(--warn-text); }
+  .oos { color: #c5221f; font-size: 13px; }
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 32px; }
+  .toc h3 { margin: 0 0 10px; font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .toc a { color: var(--primary); text-decoration: none; font-size: 14px; display: block; padding: 2px 0; }
+  .toc a:hover { text-decoration: underline; }
+  .toc .sub { padding-left: 16px; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>DocReader — Product Requirements Document</h1>
+    <div class="meta">Version 1.0 &nbsp;·&nbsp; Status: Draft &nbsp;·&nbsp; Last updated: 2026-04-06 &nbsp;·&nbsp; Owner: Mayuresh</div>
+  </header>
+
+  <div class="toc">
+    <h3>Contents</h3>
+    <a href="#p1">P1 — Product Overview</a>
+    <a href="#p2">P2 — Goals &amp; Success Metrics</a>
+    <a href="#p3">P3 — User Persona</a>
+    <a href="#p4">P4 — Functional Requirements</a>
+    <a class="sub" href="#p4-1">P4.1 — Authentication</a>
+    <a class="sub" href="#p4-2">P4.2 — Session Management</a>
+    <a class="sub" href="#p4-3">P4.3 — Drive Browser</a>
+    <a class="sub" href="#p4-4">P4.4 — Document Reader</a>
+    <a class="sub" href="#p4-5">P4.5 — Voice Reading</a>
+    <a class="sub" href="#p4-6">P4.6 — Sleep Timer</a>
+    <a class="sub" href="#p4-7">P4.7 — Reader Settings</a>
+    <a href="#p5">P5 — Non-Functional Requirements</a>
+    <a href="#p6">P6 — Privacy &amp; Security</a>
+    <a href="#p7">P7 — Out of Scope</a>
+    <a href="#p8">P8 — Future Considerations</a>
+  </div>
+
+  <!-- P1 -->
+  <h2 id="p1"><span class="section-id">P1</span> Product Overview</h2>
+  <p>DocReader is a personal Android application that provides a distraction-free, Kindle-style reading experience for Google Docs stored in the user's Google Drive. It combines comfortable long-form reading with high-quality voice narration, designed for a single user who wants to read or listen to their own documents without any data being stored on the device.</p>
+  <p>The app is intentionally simple: sign in, browse your docs, read or listen, sign out. Nothing is saved between sessions.</p>
+
+  <!-- P2 -->
+  <h2 id="p2"><span class="section-id">P2</span> Goals &amp; Success Metrics</h2>
+  <h3>Goals</h3>
+  <ul>
+    <li>Make reading long Google Docs comfortable on a phone screen</li>
+    <li>Provide a voice reading experience that sounds natural, not robotic</li>
+    <li>Ensure zero data persistence — every session starts and ends clean</li>
+    <li>Keep the UI simple enough to use without learning</li>
+  </ul>
+  <h3>Success Metrics</h3>
+  <table>
+    <tr><th>Metric</th><th>Target</th></tr>
+    <tr><td>Time from launch to reading a doc</td><td>&lt; 30 seconds</td></tr>
+    <tr><td>Time to find a doc by search</td><td>&lt; 15 seconds</td></tr>
+    <tr><td>TTS audio starts playing after tapping play</td><td>&lt; 3 seconds for first chunk</td></tr>
+    <tr><td>Session data cleared on logout/timeout</td><td>100% — verified by no on-device files</td></tr>
+    <tr><td>App crash rate</td><td>0% during normal reading sessions</td></tr>
+  </table>
+
+  <!-- P3 -->
+  <h2 id="p3"><span class="section-id">P3</span> User Persona</h2>
+  <div class="req-block">
+    <div class="req-title">Mayuresh — The Primary (and only) User</div>
+    <div class="req-body">
+      <ul>
+        <li>Uses Google Docs as a primary writing and note-taking tool</li>
+        <li>Wants to read long docs on the phone during commute, travel, or downtime</li>
+        <li>Values privacy — does not want any reading history stored on the device</li>
+        <li>Wants to listen to docs during exercise or while doing other tasks</li>
+        <li>Prefers a clean, distraction-free reading interface similar to Kindle</li>
+        <li>Comfortable with one-time technical setup (Google Cloud Console)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- P4 -->
+  <h2 id="p4"><span class="section-id">P4</span> Functional Requirements</h2>
+
+  <h3 id="p4-1"><span class="section-id">P4.1</span> Authentication</h3>
+
+  <div class="req-block">
+    <span class="req-id">P4.1.1</span>
+    <div class="req-title">Google Sign-In</div>
+    <div class="req-body">The app shall provide a Google Sign-In flow using Android Credential Manager. The user must authenticate with their Google account before accessing any content.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.1.2</span>
+    <div class="req-title">Scope of access</div>
+    <div class="req-body">The app shall request only the minimum OAuth scopes required:
+      <ul>
+        <li><code>https://www.googleapis.com/auth/drive.readonly</code> — read Drive file list</li>
+        <li><code>https://www.googleapis.com/auth/documents.readonly</code> — read document content</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.1.3</span>
+    <div class="req-title">No persistent login</div>
+    <div class="req-body">The app shall not store authentication tokens to disk (no SharedPreferences, no database, no files). The token lives in memory for the duration of the session only. On every app launch, the user must sign in again.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.1.4</span>
+    <div class="req-title">Sign-out</div>
+    <div class="req-body">A sign-out action shall be available from the Drive browser screen. Signing out immediately clears all in-memory state and returns the user to the login screen.</div>
+  </div>
+
+  <h3 id="p4-2"><span class="section-id">P4.2</span> Session Management</h3>
+
+  <div class="req-block">
+    <span class="req-id">P4.2.1</span>
+    <div class="req-title">Inactivity timeout</div>
+    <div class="req-body">If the user has not interacted with the app (scroll, tap, swipe) for 5 consecutive minutes, the session shall expire automatically, all in-memory data shall be cleared, and the user shall be returned to the login screen.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.2.2</span>
+    <div class="req-title">Timer reset on interaction</div>
+    <div class="req-body">Any user interaction (tap, scroll, swipe) shall reset the 5-minute inactivity countdown to zero.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.2.3</span>
+    <div class="req-title">Background behaviour</div>
+    <div class="req-body">When the app moves to the background (user switches to another app) and voice reading is not actively playing, the 5-minute inactivity countdown shall continue running. If the countdown expires while in the background, the session shall be cleared so that returning to the app shows the login screen.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.2.4</span>
+    <div class="req-title">Voice reading exemption</div>
+    <div class="req-body">While voice reading is actively playing, the inactivity timer shall be suspended. The sleep timer (P4.6) governs session end during voice reading.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.2.5</span>
+    <div class="req-title">App close / destroy</div>
+    <div class="req-body">When the app is closed or destroyed by the OS, all session data shall be cleared immediately.</div>
+  </div>
+
+  <h3 id="p4-3"><span class="section-id">P4.3</span> Drive Browser</h3>
+
+  <div class="req-block">
+    <span class="req-id">P4.3.1</span>
+    <div class="req-title">Root folder view</div>
+    <div class="req-body">On successful login, the app shall display the root of the user's Google Drive showing folders and Google Docs owned by the user. Shared documents shall not be shown.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.3.2</span>
+    <div class="req-title">Folder navigation</div>
+    <div class="req-body">Tapping a folder shall navigate into it and display its contents. A breadcrumb trail shall show the current path (e.g. My Drive &rsaquo; Work &rsaquo; Notes). Tapping any breadcrumb item shall navigate directly to that level.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.3.3</span>
+    <div class="req-title">Back navigation</div>
+    <div class="req-body">A back arrow shall appear when inside a subfolder, navigating up one level. The Android system back gesture/button shall also navigate up. Pressing back from the root folder shall sign the user out.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.3.4</span>
+    <div class="req-title">Search</div>
+    <div class="req-body">A search icon shall open a search bar. Searching queries across ALL folders in the user's Drive (not just the current folder). Results shall show only Google Docs (not folders). Clearing the search returns to the folder view that was active before searching.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.3.5</span>
+    <div class="req-title">Open a document</div>
+    <div class="req-body">Tapping a Google Doc in the list shall fetch the document content and open the Reader screen.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.3.6</span>
+    <div class="req-title">Sort order</div>
+    <div class="req-body">Items shall be sorted: folders first (alphabetical), then documents (alphabetical). Search results shall be sorted alphabetically.</div>
+  </div>
+
+  <h3 id="p4-4"><span class="section-id">P4.4</span> Document Reader</h3>
+
+  <div class="req-block">
+    <span class="req-id">P4.4.1</span>
+    <div class="req-title">Structured rendering</div>
+    <div class="req-body">The reader shall render the document preserving its structure: headings (H1–H6 with visual hierarchy), paragraphs, bullet lists, and numbered lists. Images and tables are out of scope for v1 (see P7).</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.4.2</span>
+    <div class="req-title">Scroll mode</div>
+    <div class="req-body">In scroll mode, the entire document is rendered as a continuous vertical scroll. This is the default reading mode.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.4.3</span>
+    <div class="req-title">Paginated mode</div>
+    <div class="req-body">In paginated mode, the document is divided into pages that fit the screen. The user navigates by swiping left/right or tapping left/right edges. The current page number and total are shown.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.4.4</span>
+    <div class="req-title">Mode toggle</div>
+    <div class="req-body">A toggle button in the toolbar shall switch between scroll and paginated mode at any time. Reading position shall be preserved on toggle (the same part of the document remains visible).</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.4.5</span>
+    <div class="req-title">No reading history</div>
+    <div class="req-body">The app shall not save reading position, recently opened documents, or any other reading state. Every document opens from the beginning.</div>
+  </div>
+
+  <h3 id="p4-5"><span class="section-id">P4.5</span> Voice Reading</h3>
+
+  <div class="req-block">
+    <span class="req-id">P4.5.1</span>
+    <div class="req-title">TTS engine</div>
+    <div class="req-body">Voice reading shall use the Google Cloud Text-to-Speech API with Neural2 voices. The API key is stored in the app's secret resource file (not in code or committed to git).</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.5.2</span>
+    <div class="req-title">Voice selection</div>
+    <div class="req-body">The user shall be able to choose from a curated list of high-quality Neural2 voices across English accents (US, UK, Australian, Indian). The list shall show the voice name, accent, and gender.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.5.3</span>
+    <div class="req-title">Playback controls</div>
+    <div class="req-body">The voice control panel shall provide: Play / Pause, Stop, Skip to next section, Skip to previous section.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.5.4</span>
+    <div class="req-title">Speed control</div>
+    <div class="req-body">The user shall be able to adjust reading speed from 0.5× to 2.0× in 0.25× increments.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.5.5</span>
+    <div class="req-title">Progress indicator</div>
+    <div class="req-body">A progress bar and section counter (e.g. "Section 3 of 12") shall be shown during voice reading.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.5.6</span>
+    <div class="req-title">No audio files on disk</div>
+    <div class="req-body">TTS audio shall be streamed and played entirely from memory. No audio files shall be written to device storage at any point.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.5.7</span>
+    <div class="req-title">Text chunking</div>
+    <div class="req-body">Documents shall be split into chunks of ≤ 4000 characters at sentence boundaries before sending to the TTS API. The next chunk shall be pre-fetched while the current one is playing to minimise gaps.</div>
+  </div>
+
+  <h3 id="p4-6"><span class="section-id">P4.6</span> Sleep Timer</h3>
+
+  <div class="req-block">
+    <span class="req-id">P4.6.1</span>
+    <div class="req-title">Sleep timer options</div>
+    <div class="req-body">The user shall be able to set a sleep timer with the following preset options: 15 minutes, 30 minutes, 45 minutes, 60 minutes, or a custom duration (entered in minutes).</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.6.2</span>
+    <div class="req-title">Timer behaviour</div>
+    <div class="req-body">When the sleep timer fires: voice reading shall stop, all session data shall be cleared, and the user shall be returned to the login screen.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.6.3</span>
+    <div class="req-title">Timer display</div>
+    <div class="req-body">While a sleep timer is active, the remaining time shall be displayed in the voice control panel (e.g. "Sleep: 23m left").</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.6.4</span>
+    <div class="req-title">Cancel timer</div>
+    <div class="req-body">The user shall be able to cancel an active sleep timer. Cancelling resumes normal inactivity-based session management.</div>
+  </div>
+
+  <h3 id="p4-7"><span class="section-id">P4.7</span> Reader Settings</h3>
+
+  <div class="req-block">
+    <span class="req-id">P4.7.1</span>
+    <div class="req-title">Font size</div>
+    <div class="req-body">The user shall be able to increase or decrease the body text font size in 1sp steps, within the range 12sp–32sp. Heading sizes scale proportionally.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.7.2</span>
+    <div class="req-title">Font family</div>
+    <div class="req-body">The user shall be able to choose between three font families: Serif, Sans-serif, and Monospace.</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.7.3</span>
+    <div class="req-title">Background theme</div>
+    <div class="req-body">The user shall be able to choose between three background themes: Light (white), Sepia (warm cream), and Dark (near-black with light text).</div>
+  </div>
+
+  <div class="req-block">
+    <span class="req-id">P4.7.4</span>
+    <div class="req-title">Settings not persisted</div>
+    <div class="req-body">Reader settings shall not be saved between sessions. Each new session starts with default settings (18sp, Serif, Light theme, Scroll mode).</div>
+  </div>
+
+  <!-- P5 -->
+  <h2 id="p5"><span class="section-id">P5</span> Non-Functional Requirements</h2>
+  <table>
+    <tr><th>ID</th><th>Requirement</th><th>Target</th></tr>
+    <tr><td>P5.1</td><td>Minimum Android version</td><td>Android 10 (API 29)</td></tr>
+    <tr><td>P5.2</td><td>Target Android version</td><td>Android 15 (API 35)</td></tr>
+    <tr><td>P5.3</td><td>App launch to login screen</td><td>&lt; 2 seconds on mid-range device</td></tr>
+    <tr><td>P5.4</td><td>Document load time (typical 10-page doc)</td><td>&lt; 3 seconds on a good connection</td></tr>
+    <tr><td>P5.5</td><td>TTS first audio chunk delay</td><td>&lt; 3 seconds after tapping play</td></tr>
+    <tr><td>P5.6</td><td>Internet connectivity</td><td>Required — app does not function offline</td></tr>
+    <tr><td>P5.7</td><td>Orientation</td><td>Portrait primary; landscape supported but not optimised</td></tr>
+  </table>
+
+  <!-- P6 -->
+  <h2 id="p6"><span class="section-id">P6</span> Privacy &amp; Security</h2>
+  <table>
+    <tr><th>ID</th><th>Requirement</th></tr>
+    <tr><td>P6.1</td><td>No data written to local storage (SharedPreferences, Room, files) at any time</td></tr>
+    <tr><td>P6.2</td><td>Auth tokens held in memory only; cleared immediately on session end</td></tr>
+    <tr><td>P6.3</td><td>TTS audio held in memory only; never written to device storage</td></tr>
+    <tr><td>P6.4</td><td>API keys stored in a gitignored resource file; never committed to source control</td></tr>
+    <tr><td>P6.5</td><td>OAuth scopes limited to read-only access to Drive and Docs</td></tr>
+    <tr><td>P6.6</td><td>No analytics, crash reporting, or third-party SDKs that transmit data</td></tr>
+    <tr><td>P6.7</td><td>No reading history, bookmarks, or recently opened list retained between sessions</td></tr>
+  </table>
+
+  <!-- P7 -->
+  <h2 id="p7"><span class="section-id">P7</span> Out of Scope (v1)</h2>
+  <ul>
+    <li class="oos">Images and embedded media within documents</li>
+    <li class="oos">Tables</li>
+    <li class="oos">Comments and suggestions</li>
+    <li class="oos">Shared documents (only owned documents are shown)</li>
+    <li class="oos">Offline reading / caching</li>
+    <li class="oos">Bookmarks or reading position persistence</li>
+    <li class="oos">Multiple user accounts</li>
+    <li class="oos">Play Store distribution</li>
+    <li class="oos">Landscape-optimised layout</li>
+    <li class="oos">Word-level highlight during voice reading</li>
+    <li class="oos">Background audio service (minimised app playback)</li>
+  </ul>
+
+  <!-- P8 -->
+  <h2 id="p8"><span class="section-id">P8</span> Future Considerations</h2>
+  <ul>
+    <li>Upgrade TTS to ElevenLabs or Google Studio voices for more natural prosody</li>
+    <li>Word or sentence highlight during voice reading</li>
+    <li>Background audio playback (foreground service)</li>
+    <li>Reading position persistence (opt-in, with explicit user consent)</li>
+    <li>Support for shared documents</li>
+    <li>Basic table rendering</li>
+    <li>Custom sleep timer sound (fade out)</li>
+  </ul>
+
+</div>
+</body>
+</html>

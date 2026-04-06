@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocReader — Screen Mockups</title>
+<style>
+  :root {
+    --primary: #1a73e8;
+    --bg: #f0f2f5;
+    --panel: #fff;
+    --border: #dadce0;
+    --muted: #5f6368;
+    --text: #202124;
+    --phone-w: 375px;
+    --phone-h: 780px;
+    --ref-bg: #e8f0fe;
+    --ref-text: #1a73e8;
+    --us-bg: #e6f4ea;
+    --us-text: #137333;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* Top bar */
+  .topbar { background: var(--primary); color: #fff; padding: 12px 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  .topbar h1 { font-size: 18px; font-weight: 600; }
+  .topbar .subtitle { font-size: 13px; opacity: 0.8; margin-left: auto; }
+
+  /* Main layout */
+  .layout { display: flex; flex: 1; overflow: hidden; }
+
+  /* Screen nav sidebar */
+  .nav { width: 220px; background: var(--panel); border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; padding: 12px 0; }
+  .nav-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); padding: 8px 16px 4px; }
+  .nav-item { padding: 8px 16px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 8px; border-left: 3px solid transparent; transition: all 0.15s; }
+  .nav-item:hover { background: #f1f3f4; }
+  .nav-item.active { border-left-color: var(--primary); background: #e8f0fe; color: var(--primary); font-weight: 600; }
+  .nav-item .num { font-family: monospace; font-size: 11px; background: #f1f3f4; padding: 1px 5px; border-radius: 3px; color: var(--muted); }
+  .nav-item.active .num { background: var(--primary); color: #fff; }
+
+  /* Center: phone */
+  .center { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; overflow: hidden; }
+  .phone-wrap { position: relative; }
+  .phone-frame { width: var(--phone-w); height: var(--phone-h); background: #1a1a1a; border-radius: 44px; padding: 12px; box-shadow: 0 24px 60px rgba(0,0,0,0.4); position: relative; }
+  .phone-screen { width: 100%; height: 100%; border-radius: 34px; overflow: hidden; background: #fff; position: relative; display: flex; flex-direction: column; }
+  .phone-notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 120px; height: 28px; background: #1a1a1a; border-radius: 0 0 18px 18px; z-index: 10; }
+
+  /* Screen contents */
+  .screen { display: none; flex-direction: column; height: 100%; }
+  .screen.active { display: flex; }
+
+  /* Status bar */
+  .status-bar { background: inherit; padding: 28px 16px 6px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+  .status-icons { display: flex; gap: 4px; align-items: center; }
+
+  /* App bar */
+  .app-bar { padding: 8px 8px 8px 4px; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .app-bar-title { font-size: 18px; font-weight: 500; flex: 1; padding-left: 4px; }
+  .app-bar-sub { font-size: 14px; flex: 1; padding-left: 4px; color: #444; }
+  .icon-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: #444; flex-shrink: 0; }
+  .icon-btn:hover { background: #f1f3f4; }
+
+  /* List items */
+  .list-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #f1f3f4; cursor: pointer; }
+  .list-item:hover { background: #fafafa; }
+  .list-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .list-icon.folder { background: #e8f0fe; }
+  .list-icon.doc { background: #f1f3f4; }
+  .list-text { flex: 1; min-width: 0; }
+  .list-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .list-meta { font-size: 11px; color: var(--muted); }
+  .list-chevron { color: #bbb; font-size: 14px; }
+  .scroll-area { flex: 1; overflow-y: auto; }
+
+  /* Breadcrumb */
+  .breadcrumb { padding: 6px 16px; font-size: 12px; color: var(--muted); border-bottom: 1px solid #f1f3f4; display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+  .breadcrumb a { color: var(--primary); cursor: pointer; }
+
+  /* Search bar */
+  .search-bar { margin: 8px 12px; padding: 8px 14px; background: #f1f3f4; border-radius: 24px; display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+
+  /* Login screen */
+  .login-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; gap: 16px; }
+  .app-icon { width: 72px; height: 72px; background: #e8f0fe; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 36px; }
+  .app-name { font-size: 28px; font-weight: 700; color: var(--primary); }
+  .app-tagline { font-size: 14px; color: var(--muted); text-align: center; }
+  .google-btn { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid var(--border); border-radius: 24px; padding: 10px 24px; font-size: 14px; font-weight: 500; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .google-g { width: 20px; height: 20px; background: #ea4335; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; font-weight: 700; }
+  .privacy-note { font-size: 11px; color: #aaa; text-align: center; line-height: 1.5; }
+
+  /* Reader */
+  .reader-content { flex: 1; overflow-y: auto; padding: 20px 20px 80px; }
+  .doc-h1 { font-size: 22px; font-weight: 700; margin-bottom: 16px; line-height: 1.3; font-family: Georgia, serif; }
+  .doc-h2 { font-size: 18px; font-weight: 700; margin: 20px 0 10px; font-family: Georgia, serif; }
+  .doc-h3 { font-size: 15px; font-weight: 700; margin: 14px 0 6px; font-family: Georgia, serif; color: #444; }
+  .doc-p { font-size: 16px; line-height: 1.75; margin-bottom: 14px; font-family: Georgia, serif; color: #222; }
+  .doc-li { font-size: 16px; line-height: 1.75; margin-bottom: 6px; font-family: Georgia, serif; color: #222; padding-left: 16px; position: relative; }
+  .doc-li::before { content: "•"; position: absolute; left: 0; }
+
+  /* Voice panel */
+  .bottom-sheet { background: #fff; border-radius: 20px 20px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.12); padding: 16px; position: absolute; bottom: 0; left: 0; right: 0; }
+  .bs-handle { width: 36px; height: 4px; background: #ddd; border-radius: 2px; margin: 0 auto 14px; }
+  .bs-title { font-size: 15px; font-weight: 600; text-align: center; margin-bottom: 10px; }
+  .progress-bar-wrap { height: 4px; background: #f1f3f4; border-radius: 2px; margin-bottom: 4px; }
+  .progress-bar-fill { height: 100%; background: var(--primary); border-radius: 2px; }
+  .progress-label { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 12px; }
+  .controls { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
+  .ctrl-btn { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; color: #444; }
+  .ctrl-btn.primary { width: 56px; height: 56px; background: var(--primary); color: #fff; font-size: 26px; box-shadow: 0 2px 8px rgba(26,115,232,0.4); }
+  .ctrl-btn:hover { background: #f1f3f4; }
+  .ctrl-btn.primary:hover { background: #1557b0; }
+  .speed-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; color: var(--muted); }
+  .speed-track { flex: 1; height: 4px; background: #f1f3f4; border-radius: 2px; position: relative; }
+  .speed-thumb { position: absolute; top: -6px; left: 40%; width: 16px; height: 16px; background: var(--primary); border-radius: 50%; }
+  .sleep-row { display: flex; align-items: center; justify-content: space-between; }
+  .text-btn { font-size: 12px; color: var(--primary); display: flex; align-items: center; gap: 4px; cursor: pointer; }
+  .voice-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .chip { font-size: 11px; padding: 4px 10px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; white-space: nowrap; }
+  .chip.selected { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+  /* Settings panel */
+  .settings-panel { position: absolute; top: 60px; right: 8px; width: 200px; background: #fff; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); padding: 14px; border: 1px solid var(--border); z-index: 10; }
+  .sp-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 6px; }
+  .sp-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .sp-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; flex-shrink: 0; }
+  .sp-val { flex: 1; text-align: center; font-size: 14px; font-weight: 500; }
+  .theme-circles { display: flex; gap: 8px; margin-bottom: 10px; }
+  .theme-circle { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+  .theme-circle.sel { border-color: var(--primary); }
+  .font-chips { display: flex; gap: 4px; margin-bottom: 10px; }
+  .font-chip { font-size: 11px; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border); cursor: pointer; }
+  .font-chip.sel { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .sp-done { text-align: right; font-size: 13px; color: var(--primary); cursor: pointer; font-weight: 600; }
+
+  /* Sleep timer dialog */
+  .dialog-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 20; }
+  .dialog { background: #fff; border-radius: 16px; padding: 20px; width: 280px; }
+  .dialog-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+  .dialog-option { padding: 10px 0; border-bottom: 1px solid #f1f3f4; font-size: 14px; cursor: pointer; color: var(--primary); }
+  .dialog-option:last-child { border-bottom: none; }
+  .dialog-cancel { text-align: right; margin-top: 8px; }
+  .dialog-cancel span { font-size: 14px; color: var(--muted); cursor: pointer; }
+
+  /* Paginated reader */
+  .page-indicator { text-align: center; padding: 6px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); flex-shrink: 0; }
+  .page-nav { display: flex; justify-content: space-between; padding: 6px 16px; border-top: 1px solid var(--border); flex-shrink: 0; }
+  .page-nav-btn { font-size: 13px; color: var(--primary); cursor: pointer; padding: 4px 8px; }
+
+  /* Session expired */
+  .expired-center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; gap: 16px; }
+  .expired-icon { font-size: 48px; }
+  .expired-title { font-size: 20px; font-weight: 700; color: #444; }
+  .expired-msg { font-size: 14px; color: var(--muted); text-align: center; line-height: 1.5; }
+
+  /* Right panel */
+  .right-panel { width: 280px; background: var(--panel); border-left: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; padding: 20px 16px; }
+  .rp-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: var(--text); }
+  .rp-desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 16px; }
+  .rp-section { margin-bottom: 12px; }
+  .rp-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 6px; }
+  .tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 3px; margin: 2px; font-family: monospace; cursor: default; }
+  .tag.prd { background: var(--ref-bg); color: var(--ref-text); }
+  .tag.us { background: var(--us-bg); color: var(--us-text); }
+  .rp-notes { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .rp-divider { height: 1px; background: var(--border); margin: 12px 0; }
+  .screen-label { font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 2px; }
+
+  /* Sepia theme */
+  .sepia { background: #F5E6C8 !important; }
+  .sepia .doc-p, .sepia .doc-h1, .sepia .doc-h2, .sepia .doc-h3, .sepia .doc-li { color: #3D2B1F; }
+  .dark-bg { background: #121212 !important; }
+  .dark-bg .doc-p, .dark-bg .doc-li { color: #E5E5E5; }
+  .dark-bg .doc-h1, .dark-bg .doc-h2, .dark-bg .doc-h3 { color: #fff; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <h1>DocReader — Screen Mockups</h1>
+  <div class="subtitle">Click a screen in the left panel &nbsp;·&nbsp; PRD &amp; user story references on the right</div>
+</div>
+
+<div class="layout">
+
+  <!-- Left nav -->
+  <div class="nav">
+    <div class="nav-label">Screens</div>
+    <div class="nav-item active" onclick="show('s1')"><span class="num">S1</span> Login</div>
+    <div class="nav-item" onclick="show('s2')"><span class="num">S2</span> Drive — Root</div>
+    <div class="nav-item" onclick="show('s3')"><span class="num">S3</span> Drive — Subfolder</div>
+    <div class="nav-item" onclick="show('s4')"><span class="num">S4</span> Drive — Search</div>
+    <div class="nav-item" onclick="show('s5')"><span class="num">S5</span> Reader — Scroll</div>
+    <div class="nav-item" onclick="show('s6')"><span class="num">S6</span> Reader — Paginated</div>
+    <div class="nav-item" onclick="show('s7')"><span class="num">S7</span> Reader — Dark Theme</div>
+    <div class="nav-item" onclick="show('s8')"><span class="num">S8</span> Reader — Sepia Theme</div>
+    <div class="nav-item" onclick="show('s9')"><span class="num">S9</span> Reader Settings</div>
+    <div class="nav-item" onclick="show('s10')"><span class="num">S10</span> Voice Controls</div>
+    <div class="nav-item" onclick="show('s11')"><span class="num">S11</span> Sleep Timer Dialog</div>
+    <div class="nav-item" onclick="show('s12')"><span class="num">S12</span> Session Expired</div>
+  </div>
+
+  <!-- Phone -->
+  <div class="center">
+    <div class="phone-wrap">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+
+          <!-- S1: Login -->
+          <div class="screen active" id="s1">
+            <div class="status-bar" style="background:#fff"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="login-center">
+              <div class="app-icon">📖</div>
+              <div class="app-name">DocReader</div>
+              <div class="app-tagline">Your Google Docs,<br>beautifully read.</div>
+              <div style="height:24px"></div>
+              <div class="google-btn"><div class="google-g">G</div> Sign in with Google</div>
+              <div style="height:32px"></div>
+              <div class="privacy-note">Sessions are not saved.<br>All data is cleared when you sign out.<br>No reading history is ever stored.</div>
+            </div>
+          </div>
+
+          <!-- S2: Drive Root -->
+          <div class="screen" id="s2">
+            <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="app-bar">
+              <div class="app-bar-title">My Drive</div>
+              <div class="icon-btn">🔍</div>
+              <div class="icon-btn">↩</div>
+            </div>
+            <div class="scroll-area">
+              <div class="list-item"><div class="list-icon folder">📁</div><div class="list-text"><div class="list-name">Personal</div><div class="list-meta">3 items</div></div><div class="list-chevron">›</div></div>
+              <div class="list-item"><div class="list-icon folder">📁</div><div class="list-text"><div class="list-name">Reading List</div><div class="list-meta">12 items</div></div><div class="list-chevron">›</div></div>
+              <div class="list-item"><div class="list-icon folder">📁</div><div class="list-text"><div class="list-name">Work</div><div class="list-meta">8 items</div></div><div class="list-chevron">›</div></div>
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">Book Notes — Atomic Habits</div><div class="list-meta">Modified Apr 3</div></div></div>
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">Ideas for Q2</div><div class="list-meta">Modified Apr 5</div></div></div>
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">Meeting Notes — March</div><div class="list-meta">Modified Mar 28</div></div></div>
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">Travel Plan 2026</div><div class="list-meta">Modified Feb 14</div></div></div>
+            </div>
+          </div>
+
+          <!-- S3: Drive Subfolder -->
+          <div class="screen" id="s3">
+            <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="app-bar">
+              <div class="icon-btn">←</div>
+              <div class="app-bar-sub"></div>
+              <div class="icon-btn">🔍</div>
+              <div class="icon-btn">↩</div>
+            </div>
+            <div class="breadcrumb"><a>My Drive</a> › <strong>Reading List</strong></div>
+            <div class="scroll-area">
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">Deep Work — Cal Newport</div><div class="list-meta">Modified Jan 10</div></div></div>
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">Meditations — Marcus Aurelius</div><div class="list-meta">Modified Feb 2</div></div></div>
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">Sapiens Summary</div><div class="list-meta">Modified Mar 15</div></div></div>
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">The Psychology of Money</div><div class="list-meta">Modified Apr 1</div></div></div>
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">Zero to One — Notes</div><div class="list-meta">Modified Mar 20</div></div></div>
+            </div>
+          </div>
+
+          <!-- S4: Search -->
+          <div class="screen" id="s4">
+            <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="app-bar" style="background:#f1f3f4; margin:8px; border-radius:24px; border:none; padding: 6px 12px;">
+              <div class="icon-btn" style="font-size:16px">←</div>
+              <input style="flex:1; border:none; background:transparent; font-size:14px; outline:none;" value="atomic" readonly>
+              <div class="icon-btn" style="font-size:14px">✕</div>
+            </div>
+            <div style="padding:6px 16px;font-size:12px;color:var(--muted);border-bottom:1px solid #f1f3f4;">Results across all folders</div>
+            <div class="scroll-area">
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">Book Notes — Atomic Habits</div><div class="list-meta">My Drive · Modified Apr 3</div></div></div>
+              <div class="list-item"><div class="list-icon doc">📄</div><div class="list-text"><div class="list-name">Atomic Habits — Chapter 5</div><div class="list-meta">My Drive › Reading List · Modified Feb 8</div></div></div>
+            </div>
+          </div>
+
+          <!-- S5: Reader Scroll -->
+          <div class="screen" id="s5">
+            <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="app-bar">
+              <div class="icon-btn">←</div>
+              <div class="app-bar-sub">Atomic Habits — Notes</div>
+              <div class="icon-btn" title="Toggle scroll/paginated">⇅</div>
+              <div class="icon-btn" title="Settings">⚙</div>
+              <div class="icon-btn" title="Voice">🎙</div>
+            </div>
+            <div class="reader-content">
+              <div class="doc-h1">Atomic Habits</div>
+              <div class="doc-h2">Chapter 1 — The Surprising Power of Small Habits</div>
+              <div class="doc-p">It is so easy to overestimate the importance of one defining moment and underestimate the value of making small improvements on a daily basis.</div>
+              <div class="doc-p">Too often, we convince ourselves that massive success requires massive action. Whether it is losing weight, building a business, writing a book, winning a championship, or achieving any other goal, we put pressure on ourselves to make some earth-shattering improvement.</div>
+              <div class="doc-h3">The Aggregation of Marginal Gains</div>
+              <div class="doc-p">The backbone of this book is this idea: tiny changes, remarkable results.</div>
+              <div class="doc-li">1% better every day = 37× better in a year</div>
+              <div class="doc-li">1% worse every day = near zero in a year</div>
+              <div class="doc-li">Small habits compound — for better or worse</div>
+            </div>
+          </div>
+
+          <!-- S6: Reader Paginated -->
+          <div class="screen" id="s6">
+            <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="app-bar">
+              <div class="icon-btn">←</div>
+              <div class="app-bar-sub">Atomic Habits — Notes</div>
+              <div class="icon-btn" style="color:var(--primary)">⇅</div>
+              <div class="icon-btn">⚙</div>
+              <div class="icon-btn">🎙</div>
+            </div>
+            <div class="reader-content" style="overflow:hidden;">
+              <div class="doc-h2">Chapter 1 — The Surprising Power</div>
+              <div class="doc-p">It is so easy to overestimate the importance of one defining moment and underestimate the value of making small improvements on a daily basis.</div>
+              <div class="doc-p">Too often, we convince ourselves that massive success requires massive action.</div>
+              <div class="doc-h3">The Aggregation of Marginal Gains</div>
+              <div class="doc-p">The backbone of this book is this idea: tiny changes, remarkable results.</div>
+            </div>
+            <div class="page-indicator">Page 2 of 8</div>
+            <div class="page-nav"><span class="page-nav-btn">‹ Previous</span><span class="page-nav-btn">Next ›</span></div>
+          </div>
+
+          <!-- S7: Dark Theme -->
+          <div class="screen dark-bg" id="s7" style="background:#121212">
+            <div class="status-bar" style="background:#121212; color:#ccc"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="app-bar" style="background:#1e1e1e; border-color:#333">
+              <div class="icon-btn" style="color:#ccc">←</div>
+              <div class="app-bar-sub" style="color:#ccc">Atomic Habits — Notes</div>
+              <div class="icon-btn" style="color:#ccc">⇅</div>
+              <div class="icon-btn" style="color:#ccc">⚙</div>
+              <div class="icon-btn" style="color:#ccc">🎙</div>
+            </div>
+            <div class="reader-content dark-bg">
+              <div class="doc-h1" style="color:#fff">Atomic Habits</div>
+              <div class="doc-h2" style="color:#e0e0e0">Chapter 1 — The Surprising Power</div>
+              <div class="doc-p" style="color:#d0d0d0">It is so easy to overestimate the importance of one defining moment and underestimate the value of making small improvements on a daily basis.</div>
+              <div class="doc-p" style="color:#d0d0d0">Too often, we convince ourselves that massive success requires massive action.</div>
+              <div class="doc-h3" style="color:#bbb">The Aggregation of Marginal Gains</div>
+              <div class="doc-li" style="color:#d0d0d0">1% better every day = 37× better in a year</div>
+              <div class="doc-li" style="color:#d0d0d0">Small habits compound — for better or worse</div>
+            </div>
+          </div>
+
+          <!-- S8: Sepia Theme -->
+          <div class="screen" id="s8" style="background:#F5E6C8">
+            <div class="status-bar" style="background:#F5E6C8; color:#3D2B1F"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="app-bar" style="background:#EDD9AA; border-color:#d4b896">
+              <div class="icon-btn" style="color:#3D2B1F">←</div>
+              <div class="app-bar-sub" style="color:#3D2B1F">Atomic Habits — Notes</div>
+              <div class="icon-btn" style="color:#3D2B1F">⇅</div>
+              <div class="icon-btn" style="color:#3D2B1F">⚙</div>
+              <div class="icon-btn" style="color:#3D2B1F">🎙</div>
+            </div>
+            <div class="reader-content" style="background:#F5E6C8">
+              <div class="doc-h1" style="color:#3D2B1F; font-family:Georgia,serif">Atomic Habits</div>
+              <div class="doc-h2" style="color:#4a3020; font-family:Georgia,serif">Chapter 1 — The Surprising Power</div>
+              <div class="doc-p" style="color:#3D2B1F; font-family:Georgia,serif">It is so easy to overestimate the importance of one defining moment and underestimate the value of making small improvements on a daily basis.</div>
+              <div class="doc-p" style="color:#3D2B1F; font-family:Georgia,serif">Too often, we convince ourselves that massive success requires massive action.</div>
+              <div class="doc-li" style="color:#3D2B1F; font-family:Georgia,serif">1% better every day = 37× better in a year</div>
+              <div class="doc-li" style="color:#3D2B1F; font-family:Georgia,serif">Small habits compound — for better or worse</div>
+            </div>
+          </div>
+
+          <!-- S9: Settings panel -->
+          <div class="screen" id="s9" style="position:relative">
+            <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="app-bar">
+              <div class="icon-btn">←</div>
+              <div class="app-bar-sub">Atomic Habits — Notes</div>
+              <div class="icon-btn">⇅</div>
+              <div class="icon-btn" style="color:var(--primary)">⚙</div>
+              <div class="icon-btn">🎙</div>
+            </div>
+            <div class="reader-content" style="filter:blur(1px)">
+              <div class="doc-h1">Atomic Habits</div>
+              <div class="doc-p">It is so easy to overestimate the importance of one defining moment and underestimate the value of making small improvements on a daily basis.</div>
+              <div class="doc-p">Too often, we convince ourselves that massive success requires massive action.</div>
+            </div>
+            <div class="settings-panel">
+              <div class="sp-label">Font size</div>
+              <div class="sp-row"><div class="sp-btn">−</div><div class="sp-val">18sp</div><div class="sp-btn">+</div></div>
+              <div class="sp-label">Background</div>
+              <div class="theme-circles">
+                <div class="theme-circle sel" style="background:#FAF9F6; border-color:var(--primary)"></div>
+                <div class="theme-circle" style="background:#F5E6C8"></div>
+                <div class="theme-circle" style="background:#121212; border-color:#555"></div>
+              </div>
+              <div class="sp-label">Font</div>
+              <div class="font-chips">
+                <div class="font-chip sel">Serif</div>
+                <div class="font-chip">Sans</div>
+                <div class="font-chip">Mono</div>
+              </div>
+              <div class="sp-done">Done</div>
+            </div>
+          </div>
+
+          <!-- S10: Voice Controls -->
+          <div class="screen" id="s10" style="position:relative">
+            <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="app-bar">
+              <div class="icon-btn">←</div>
+              <div class="app-bar-sub">Atomic Habits — Notes</div>
+              <div class="icon-btn">⇅</div>
+              <div class="icon-btn">⚙</div>
+              <div class="icon-btn" style="color:var(--primary)">🎙</div>
+            </div>
+            <div class="reader-content" style="filter:blur(1px)">
+              <div class="doc-h1">Atomic Habits</div>
+              <div class="doc-p">It is so easy to overestimate the importance of one defining moment...</div>
+            </div>
+            <div class="bottom-sheet">
+              <div class="bs-handle"></div>
+              <div class="bs-title">Voice Reading</div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:35%"></div></div>
+              <div class="progress-label">Section 4 of 12</div>
+              <div class="controls">
+                <div class="ctrl-btn">⏮</div>
+                <div class="ctrl-btn primary">⏸</div>
+                <div class="ctrl-btn">⏭</div>
+                <div class="ctrl-btn">⏹</div>
+              </div>
+              <div class="speed-row">
+                <span>0.5×</span>
+                <div class="speed-track"><div class="speed-thumb"></div></div>
+                <span>2×</span>
+                <span style="margin-left:4px; font-weight:600; color:var(--text)">1.25×</span>
+              </div>
+              <div class="sleep-row">
+                <div class="text-btn">🌙 Sleep timer</div>
+              </div>
+              <div class="sp-label" style="margin-top:8px">Voice</div>
+              <div class="voice-chips">
+                <div class="chip selected">Aria (US ♀)</div>
+                <div class="chip">David (US ♂)</div>
+                <div class="chip">Alice (UK ♀)</div>
+                <div class="chip">Ben (UK ♂)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- S11: Sleep Timer Dialog -->
+          <div class="screen" id="s11" style="position:relative">
+            <div class="status-bar"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="app-bar">
+              <div class="icon-btn">←</div>
+              <div class="app-bar-sub">Atomic Habits — Notes</div>
+              <div class="icon-btn">⇅</div><div class="icon-btn">⚙</div><div class="icon-btn">🎙</div>
+            </div>
+            <div class="reader-content" style="filter:blur(2px)">
+              <div class="doc-h1">Atomic Habits</div>
+              <div class="doc-p">It is so easy to overestimate the importance of one defining moment...</div>
+            </div>
+            <div class="dialog-overlay">
+              <div class="dialog">
+                <div class="dialog-title">🌙 Set sleep timer</div>
+                <div class="dialog-option">15 minutes</div>
+                <div class="dialog-option">30 minutes</div>
+                <div class="dialog-option">45 minutes</div>
+                <div class="dialog-option">60 minutes</div>
+                <div class="dialog-option">Custom...</div>
+                <div class="dialog-cancel"><span>Cancel</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- S12: Session Expired -->
+          <div class="screen" id="s12">
+            <div class="status-bar" style="background:#fff"><span>9:41</span><div class="status-icons">📶 🔋</div></div>
+            <div class="expired-center">
+              <div class="expired-icon">🔒</div>
+              <div class="expired-title">Session ended</div>
+              <div class="expired-msg">Your session has expired due to inactivity.<br><br>All document data has been cleared.</div>
+              <div style="height:24px"></div>
+              <div class="google-btn"><div class="google-g">G</div> Sign in again</div>
+            </div>
+          </div>
+
+        </div><!-- phone-screen -->
+      </div><!-- phone-frame -->
+    </div>
+  </div>
+
+  <!-- Right panel: references -->
+  <div class="right-panel" id="right-panel">
+    <!-- Filled by JS -->
+  </div>
+
+</div><!-- layout -->
+
+<script>
+const screens = {
+  s1: {
+    label: "S1 — Login Screen",
+    desc: "The first screen seen on every launch. No persistent login — the user must sign in each time.",
+    prd: ["P4.1.1","P4.1.2","P4.1.3","P6.1","P6.2","P6.7"],
+    us: ["US1.1","US1.3"],
+    notes: "The privacy note at the bottom reinforces the incognito design — sets expectations clearly before sign-in."
+  },
+  s2: {
+    label: "S2 — Drive Browser (Root)",
+    desc: "Shown immediately after sign-in. Lists the user's own folders and docs at Drive root. Folders appear first, both groups sorted alphabetically.",
+    prd: ["P4.3.1","P4.3.6","P6.7"],
+    us: ["US3.1"],
+    notes: "Only owned files shown — no shared docs. Each item shows name and modified date. The ↩ icon is the sign-out button."
+  },
+  s3: {
+    label: "S3 — Drive Browser (Subfolder)",
+    desc: "Navigated into a subfolder. Breadcrumb shows the current path. Back arrow navigates up one level.",
+    prd: ["P4.3.2","P4.3.3"],
+    us: ["US3.2"],
+    notes: "Breadcrumb items are tappable to jump to any ancestor level. Back from root = sign out."
+  },
+  s4: {
+    label: "S4 — Drive Browser (Search)",
+    desc: "Search mode searches across ALL folders, not just the current one. Only Google Docs appear in results (no folders).",
+    prd: ["P4.3.4"],
+    us: ["US3.3"],
+    notes: "Results show the parent folder path so the user knows where each doc lives. Clearing search returns to the prior folder."
+  },
+  s5: {
+    label: "S5 — Reader (Scroll Mode)",
+    desc: "Default reading mode. Continuous vertical scroll. Document structure is preserved: H1/H2/H3 headings, paragraphs, bullet lists.",
+    prd: ["P4.4.1","P4.4.2","P4.4.4","P4.4.5"],
+    us: ["US4.1","US4.2"],
+    notes: "⇅ in toolbar toggles to paginated mode. ⚙ opens settings. 🎙 opens voice panel. No reading history is saved."
+  },
+  s6: {
+    label: "S6 — Reader (Paginated Mode)",
+    desc: "Page-by-page reading. Page indicator at bottom. Previous/Next buttons at bottom. Swipe left/right also turns pages.",
+    prd: ["P4.4.3","P4.4.4"],
+    us: ["US4.2"],
+    notes: "Reading position is preserved when toggling between scroll and paginated. The ⇅ icon is highlighted (blue) to show active paginated mode."
+  },
+  s7: {
+    label: "S7 — Reader (Dark Theme)",
+    desc: "Dark background theme for reading in low light. Text switches to light grey. Toolbar also darkens.",
+    prd: ["P4.7.3","P4.7.4"],
+    us: ["US7.2"],
+    notes: "Settings are not persisted — next session starts with the default Light theme."
+  },
+  s8: {
+    label: "S8 — Reader (Sepia Theme)",
+    desc: "Warm cream background for comfortable daytime reading. Reduces blue light compared to the white Light theme.",
+    prd: ["P4.7.3","P4.7.4"],
+    us: ["US7.2"],
+    notes: "Text colour shifts to dark brown to match the warm background."
+  },
+  s9: {
+    label: "S9 — Reader Settings Panel",
+    desc: "Compact settings overlay that appears in the top-right corner without leaving the reader. Font size, background theme, and font family.",
+    prd: ["P4.7.1","P4.7.2","P4.7.3","P4.7.4"],
+    us: ["US7.1","US7.2","US7.3"],
+    notes: "Changes apply immediately. 'Done' dismisses the panel. Settings are NOT saved — reset each session."
+  },
+  s10: {
+    label: "S10 — Voice Controls Panel",
+    desc: "Bottom sheet shown when the mic button is tapped. Provides all voice reading controls: playback, speed, voice selection, and sleep timer.",
+    prd: ["P4.5.1","P4.5.2","P4.5.3","P4.5.4","P4.5.5","P4.5.6","P4.6.3","P4.6.4"],
+    us: ["US5.1","US5.2","US5.3","US5.4","US5.5","US6.2","US6.3"],
+    notes: "Progress bar shows overall document progress. Speed slider goes 0.5× to 2×. Voice chips show accent and gender. Sleep timer displays remaining time when active."
+  },
+  s11: {
+    label: "S11 — Sleep Timer Dialog",
+    desc: "Modal dialog for setting a sleep timer. Audible-style presets plus a custom option.",
+    prd: ["P4.6.1","P4.6.2"],
+    us: ["US6.1"],
+    notes: "When the timer fires: audio stops, session is cleared, app shows login screen. Custom input accepts any number of minutes."
+  },
+  s12: {
+    label: "S12 — Session Expired",
+    desc: "Shown when the session ends due to inactivity timeout (5 min) or sleep timer. All data is already cleared at this point.",
+    prd: ["P4.2.1","P4.2.3","P4.2.5","P6.1","P6.2"],
+    us: ["US2.1","US2.2"],
+    notes: "The message explains why the session ended. Sign in again restarts a fresh session."
+  }
+};
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') === `show('${id}')`) n.classList.add('active');
+  });
+  const d = screens[id];
+  const rp = document.getElementById('right-panel');
+  rp.innerHTML = `
+    <div class="screen-label">${d.label}</div>
+    <div class="rp-divider"></div>
+    <div class="rp-desc">${d.desc}</div>
+    <div class="rp-section">
+      <div class="rp-label">PRD References</div>
+      ${d.prd.map(r => `<span class="tag prd">${r}</span>`).join('')}
+    </div>
+    <div class="rp-section">
+      <div class="rp-label">User Story References</div>
+      ${d.us.map(r => `<span class="tag us">${r}</span>`).join('')}
+    </div>
+    <div class="rp-divider"></div>
+    <div class="rp-label">Design Notes</div>
+    <div class="rp-notes">${d.notes}</div>
+  `;
+}
+
+// Init
+show('s1');
+</script>
+</body>
+</html>

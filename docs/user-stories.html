@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DocReader — User Stories</title>
+<style>
+  :root {
+    --primary: #1a73e8;
+    --surface: #fff;
+    --bg: #f8f9fa;
+    --text: #202124;
+    --muted: #5f6368;
+    --border: #dadce0;
+    --tag-bg: #e8f0fe;
+    --tag-text: #1a73e8;
+    --prd-bg: #e6f4ea;
+    --prd-text: #137333;
+    --ac-bg: #fef7e0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.7; }
+  .page { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  header { border-bottom: 2px solid var(--primary); padding-bottom: 20px; margin-bottom: 40px; }
+  header h1 { font-size: 28px; color: var(--primary); }
+  header .meta { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  h2 { font-size: 20px; color: var(--primary); margin: 40px 0 16px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .section-id { display: inline-block; background: var(--tag-bg); color: var(--tag-text); font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-right: 8px; font-family: monospace; }
+  .prd-ref { display: inline-block; background: var(--prd-bg); color: var(--prd-text); font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 3px; font-family: monospace; }
+  .story { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin: 12px 0; }
+  .story-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+  .story-id { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--tag-text); background: var(--tag-bg); padding: 2px 7px; border-radius: 3px; white-space: nowrap; margin-top: 2px; }
+  .story-title { font-weight: 600; font-size: 15px; }
+  .story-text { background: #f1f3f4; border-radius: 4px; padding: 8px 12px; font-style: italic; color: var(--muted); margin: 8px 0; font-size: 14px; }
+  .ac-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin: 10px 0 4px; }
+  .ac-list { list-style: none; padding: 0; }
+  .ac-list li { padding: 4px 0 4px 16px; position: relative; font-size: 14px; }
+  .ac-list li::before { content: "✓"; position: absolute; left: 0; color: #34a853; font-weight: 700; }
+  .refs { margin-top: 10px; font-size: 12px; color: var(--muted); }
+  .refs span { margin-right: 4px; }
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin-bottom: 32px; }
+  .toc h3 { margin: 0 0 10px; font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .toc a { color: var(--primary); text-decoration: none; font-size: 14px; display: block; padding: 2px 0; }
+  .toc a:hover { text-decoration: underline; }
+  .priority { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 3px; }
+  .p-must { background: #fce8e6; color: #c5221f; }
+  .p-should { background: #fef7e0; color: #b06000; }
+  .p-could { background: #f1f3f4; color: #5f6368; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <h1>DocReader — User Stories</h1>
+    <div class="meta">Version 1.0 &nbsp;·&nbsp; Last updated: 2026-04-06 &nbsp;·&nbsp; Priority: <span class="priority p-must">Must have</span> <span class="priority p-should">Should have</span> <span class="priority p-could">Could have</span></div>
+  </header>
+
+  <div class="toc">
+    <h3>Contents</h3>
+    <a href="#us1">US1 — Authentication</a>
+    <a href="#us2">US2 — Session Management</a>
+    <a href="#us3">US3 — Drive Browsing</a>
+    <a href="#us4">US4 — Document Reading</a>
+    <a href="#us5">US5 — Voice Reading</a>
+    <a href="#us6">US6 — Sleep Timer</a>
+    <a href="#us7">US7 — Reader Settings</a>
+  </div>
+
+  <!-- US1 -->
+  <h2 id="us1"><span class="section-id">US1</span> Authentication</h2>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US1.1</div>
+      <div>
+        <div class="story-title">Sign in with Google <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to sign in with my Google account so that the app can access my Google Docs without me entering a password manually.</div>
+    <div class="ac-label">Acceptance Criteria</div>
+    <ul class="ac-list">
+      <li>A "Sign in with Google" button is visible on the first screen</li>
+      <li>Tapping it launches the standard Android Google account picker</li>
+      <li>On successful sign-in, the app navigates to the Drive browser</li>
+      <li>If sign-in fails, a clear error message is shown and the user can retry</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.1.1</span> <span class="prd-ref">P4.1.2</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US1.2</div>
+      <div>
+        <div class="story-title">Sign out <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want a sign-out option so that I can end my session explicitly and know my data has been cleared.</div>
+    <ul class="ac-list">
+      <li>A sign-out button is accessible from the Drive browser screen</li>
+      <li>Tapping it immediately clears all in-memory data</li>
+      <li>The app returns to the login screen</li>
+      <li>No document content or tokens remain after sign-out</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.1.4</span> <span class="prd-ref">P6.2</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US1.3</div>
+      <div>
+        <div class="story-title">Fresh login every launch <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want the app to always require sign-in on launch so that I know no previous session data is being reused.</div>
+    <ul class="ac-list">
+      <li>The app always opens on the login screen, never a previously authenticated state</li>
+      <li>No "remember me" or auto-login feature exists</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.1.3</span> <span class="prd-ref">P6.1</span></div>
+  </div>
+
+  <!-- US2 -->
+  <h2 id="us2"><span class="section-id">US2</span> Session Management</h2>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US2.1</div>
+      <div>
+        <div class="story-title">Auto-logout on inactivity <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want the app to automatically sign me out after 5 minutes of inactivity so that my documents aren't left open if I forget to sign out.</div>
+    <ul class="ac-list">
+      <li>A 5-minute countdown starts from the last user interaction</li>
+      <li>Any tap, scroll, or swipe resets the countdown</li>
+      <li>When the timer fires, session data is cleared and the login screen is shown</li>
+      <li>A brief message explains why the session ended</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.2.1</span> <span class="prd-ref">P4.2.2</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US2.2</div>
+      <div>
+        <div class="story-title">Auto-logout when backgrounded <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want the app to log me out if I switch away from it for more than 5 minutes (without voice reading active) so that my session is protected even if I forget the app is open.</div>
+    <ul class="ac-list">
+      <li>Switching to another app starts the inactivity countdown (or continues it)</li>
+      <li>Returning to the app within 5 minutes keeps the session active</li>
+      <li>Returning after 5 minutes shows the login screen</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.2.3</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US2.3</div>
+      <div>
+        <div class="story-title">Voice reading keeps session alive <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want voice reading to keep my session active so that the app doesn't log me out while I'm listening.</div>
+    <ul class="ac-list">
+      <li>The 5-minute inactivity timer is paused while voice reading is playing</li>
+      <li>Stopping voice reading resumes the inactivity timer</li>
+      <li>The sleep timer (US6) governs session end during voice reading</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.2.4</span></div>
+  </div>
+
+  <!-- US3 -->
+  <h2 id="us3"><span class="section-id">US3</span> Drive Browsing</h2>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US3.1</div>
+      <div>
+        <div class="story-title">Browse Drive root <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to see my Google Drive folders and documents listed after signing in so that I can find what I want to read.</div>
+    <ul class="ac-list">
+      <li>Folders appear before documents, both sorted alphabetically</li>
+      <li>Each item shows an icon (folder or document), name, and last modified date</li>
+      <li>Only files owned by me are shown — no shared documents</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.3.1</span> <span class="prd-ref">P4.3.6</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US3.2</div>
+      <div>
+        <div class="story-title">Navigate into folders <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to tap a folder and see its contents so that I can find documents organised in subfolders.</div>
+    <ul class="ac-list">
+      <li>Tapping a folder loads and shows its contents</li>
+      <li>A breadcrumb shows the current path (e.g. My Drive &rsaquo; Work &rsaquo; Notes)</li>
+      <li>Tapping a breadcrumb item jumps directly to that level</li>
+      <li>Back arrow or system back navigates up one level</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.3.2</span> <span class="prd-ref">P4.3.3</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US3.3</div>
+      <div>
+        <div class="story-title">Search across all docs <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to search for a document by name across all folders so that I can find it without knowing where it's stored.</div>
+    <ul class="ac-list">
+      <li>A search icon in the toolbar opens a search bar</li>
+      <li>Results show documents from all folders matching the query</li>
+      <li>Each result shows the document name</li>
+      <li>Clearing or cancelling the search returns to the previous folder view</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.3.4</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US3.4</div>
+      <div>
+        <div class="story-title">Open a document <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to tap a document and have it open in the reader so I can start reading immediately.</div>
+    <ul class="ac-list">
+      <li>Tapping a document opens the reader screen</li>
+      <li>A loading indicator is shown while the document fetches</li>
+      <li>If loading fails, a clear error message is shown with a retry option</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.3.5</span></div>
+  </div>
+
+  <!-- US4 -->
+  <h2 id="us4"><span class="section-id">US4</span> Document Reading</h2>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US4.1</div>
+      <div>
+        <div class="story-title">Read with preserved structure <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want the document to display with its headings, paragraphs, and lists intact so that it's easy to navigate and read.</div>
+    <ul class="ac-list">
+      <li>Headings render at visually distinct sizes (H1 largest, H6 smallest)</li>
+      <li>Bullet and numbered lists render with correct indentation and markers</li>
+      <li>Paragraph spacing is comfortable for reading</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.4.1</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US4.2</div>
+      <div>
+        <div class="story-title">Switch between scroll and paginated mode <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to switch between continuous scroll and page-by-page reading at any time so that I can choose the style that suits me.</div>
+    <ul class="ac-list">
+      <li>A toggle button in the toolbar switches between modes</li>
+      <li>My reading position is preserved when switching</li>
+      <li>In paginated mode, I can swipe left/right or tap edges to turn pages</li>
+      <li>In paginated mode, the current page and total pages are shown</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.4.2</span> <span class="prd-ref">P4.4.3</span> <span class="prd-ref">P4.4.4</span></div>
+  </div>
+
+  <!-- US5 -->
+  <h2 id="us5"><span class="section-id">US5</span> Voice Reading</h2>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US5.1</div>
+      <div>
+        <div class="story-title">Start voice reading <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to tap a button and have the document read aloud in a natural-sounding voice so that I can listen without looking at the screen.</div>
+    <ul class="ac-list">
+      <li>A microphone icon in the reader toolbar opens the voice control panel</li>
+      <li>Tapping Play starts reading from the beginning of the document</li>
+      <li>Audio begins within 3 seconds of tapping Play</li>
+      <li>The voice sounds natural (Google Cloud TTS Neural2)</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.5.1</span> <span class="prd-ref">P4.5.7</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US5.2</div>
+      <div>
+        <div class="story-title">Control playback <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want play, pause, stop, and skip controls so that I can manage listening without restarting from the beginning.</div>
+    <ul class="ac-list">
+      <li>Play / Pause toggles audio on and off</li>
+      <li>Stop ends reading and resets to the beginning</li>
+      <li>Skip forward moves to the next section/chunk</li>
+      <li>Skip back moves to the previous section/chunk</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.5.3</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US5.3</div>
+      <div>
+        <div class="story-title">Adjust reading speed <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to control how fast the document is read so that I can listen at a comfortable pace.</div>
+    <ul class="ac-list">
+      <li>A speed slider lets me set speed from 0.5× to 2.0×</li>
+      <li>The current speed is displayed numerically (e.g. "1.25×")</li>
+      <li>Speed changes take effect from the next chunk</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.5.4</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US5.4</div>
+      <div>
+        <div class="story-title">Choose a voice <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to pick from a list of voices so that I can choose the accent and tone I find most pleasant for long listening sessions.</div>
+    <ul class="ac-list">
+      <li>A curated list of Neural2 voices is shown (US, UK, Australian, Indian accents)</li>
+      <li>Each voice shows its name, accent, and gender</li>
+      <li>The selected voice is highlighted</li>
+      <li>Voice changes take effect from the next chunk</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.5.2</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US5.5</div>
+      <div>
+        <div class="story-title">Track reading progress <span class="priority p-should">Should have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to see how far through the document the voice reader has got so that I know how much is left.</div>
+    <ul class="ac-list">
+      <li>A progress bar shows overall reading progress</li>
+      <li>A section counter shows the current and total sections (e.g. "Section 4 of 12")</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.5.5</span></div>
+  </div>
+
+  <!-- US6 -->
+  <h2 id="us6"><span class="section-id">US6</span> Sleep Timer</h2>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US6.1</div>
+      <div>
+        <div class="story-title">Set a sleep timer <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to set a sleep timer so that the app stops reading and logs me out automatically when I'm likely to have fallen asleep.</div>
+    <ul class="ac-list">
+      <li>A sleep timer button is visible in the voice control panel</li>
+      <li>Tapping it shows options: 15 min, 30 min, 45 min, 60 min, Custom</li>
+      <li>Selecting an option starts the countdown</li>
+      <li>When the timer fires: audio stops, session clears, login screen is shown</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.6.1</span> <span class="prd-ref">P4.6.2</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US6.2</div>
+      <div>
+        <div class="story-title">See timer countdown <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to see how much time is left on the sleep timer so that I know when the app will stop.</div>
+    <ul class="ac-list">
+      <li>The remaining minutes are shown in the voice control panel while the timer is active</li>
+      <li>It updates every minute</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.6.3</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US6.3</div>
+      <div>
+        <div class="story-title">Cancel the sleep timer <span class="priority p-should">Should have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to cancel an active sleep timer so that the app keeps reading if I'm still awake.</div>
+    <ul class="ac-list">
+      <li>A Cancel button is visible next to the timer countdown</li>
+      <li>Cancelling removes the timer and the display reverts to the normal sleep timer button</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.6.4</span></div>
+  </div>
+
+  <!-- US7 -->
+  <h2 id="us7"><span class="section-id">US7</span> Reader Settings</h2>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US7.1</div>
+      <div>
+        <div class="story-title">Adjust font size <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to increase or decrease the font size so that reading is comfortable for my eyes.</div>
+    <ul class="ac-list">
+      <li>+ and − buttons adjust font size in 1sp steps</li>
+      <li>Range: 12sp to 32sp</li>
+      <li>The current size is displayed between the buttons</li>
+      <li>Heading sizes scale proportionally with body size</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.7.1</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US7.2</div>
+      <div>
+        <div class="story-title">Choose background theme <span class="priority p-must">Must have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to switch between light, sepia, and dark backgrounds so that reading is comfortable in any lighting.</div>
+    <ul class="ac-list">
+      <li>Three coloured circles represent Light, Sepia, and Dark themes</li>
+      <li>Tapping one applies it immediately to the reader</li>
+      <li>The selected theme is visually indicated</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.7.3</span></div>
+  </div>
+
+  <div class="story">
+    <div class="story-header">
+      <div class="story-id">US7.3</div>
+      <div>
+        <div class="story-title">Choose font family <span class="priority p-should">Should have</span></div>
+      </div>
+    </div>
+    <div class="story-text">As a user, I want to pick between serif, sans-serif, and monospace fonts so that I can read in my preferred style.</div>
+    <ul class="ac-list">
+      <li>Three font options are shown as text labels</li>
+      <li>Tapping one applies it immediately</li>
+      <li>The selected font is highlighted</li>
+    </ul>
+    <div class="refs">PRD: <span class="prd-ref">P4.7.2</span></div>
+  </div>
+
+</div>
+</body>
+</html>

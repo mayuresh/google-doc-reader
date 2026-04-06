@@ -29,6 +29,7 @@
 #   Section 8  — Git and branch workflow
 #   Section 9  — Things to never do
 #   Section 10 — Code organisation standards
+#   Section 11 — Design-first workflow (PRD, user stories, mockups)
 # ================================================
 
 
@@ -65,8 +66,9 @@ When the user asks for something, always follow this order:
   1. Read PROJECT.md for context (if not already done this session)
   2. Confirm your understanding of the request
   3. Check if a GitHub Issue exists (Section 3)
-  4. Do the work
-  5. Leave the codebase in a better state than you found it
+  4. If this is a new feature of meaningful scope, run Section 11 (design-first)
+  5. Do the work
+  6. Leave the codebase in a better state than you found it
 
 
 ---
@@ -688,6 +690,115 @@ Always create a tag before making large or risky changes.
 ---
 
 
+---
+
+
+# SECTION 11 — Design-first workflow
+# =====================================
+# Before writing any code for a new feature of meaningful scope, produce three
+# design artefacts. This catches misunderstood requirements before they are
+# baked into code, and gives the user something concrete to review and approve.
+#
+# What counts as "meaningful scope"?
+#   - Any new screen or major UI component
+#   - Any new user-facing flow (auth, onboarding, a multi-step process)
+#   - Any feature the user described in more than one sentence
+#
+# What does NOT require this process?
+#   - Bug fixes
+#   - Small copy or style tweaks
+#   - Refactors with no user-visible change
+#   - Single-function additions with no UI
+#
+# The three artefacts to produce, IN ORDER:
+
+## 11.1 — Product Requirements Document (docs/prd.html)
+# Why: Forces the requirements to be stated precisely before any code is written.
+# Vague requirements become expensive when discovered mid-implementation.
+#
+# Structure — use numbered sections so user stories and mockups can reference them:
+#   P1  — Product Overview (what it is, what problem it solves)
+#   P2  — Goals & Success Metrics
+#   P3  — User Personas (who uses this and why)
+#   P4  — Functional Requirements (numbered: P4.1, P4.1.1, P4.1.2, ...)
+#   P5  — Non-Functional Requirements (performance, platform, offline, etc.)
+#   P6  — Privacy & Security
+#   P7  — Out of Scope (explicit list of what will NOT be built in this version)
+#   P8  — Future Considerations
+#
+# Create as: docs/prd.html
+# Use the HTML doc template from Section 6.2.
+
+## 11.2 — User Stories (docs/user-stories.html)
+# Why: Translates the PRD requirements into the user's perspective. Makes
+# acceptance criteria explicit so there is no ambiguity about what "done" means.
+#
+# Structure — use numbered sections aligned to PRD sections:
+#   US1, US2, ... — one group per functional area
+#   US1.1, US1.2, ... — individual stories within each group
+#
+# Each story must include:
+#   - Story ID (e.g. US1.1)
+#   - Title and priority (Must have / Should have / Could have)
+#   - "As a user, I want to... so that..."
+#   - Acceptance criteria (bulleted, each item is testable)
+#   - PRD reference (e.g. P4.1.1, P4.1.2)
+#
+# Create as: docs/user-stories.html
+
+## 11.3 — Screen Mockups (docs/mockups.html)
+# Why: A screen mockup surfaces UI problems before a line of code is written.
+# It is far cheaper to move a button in HTML than in compiled app code.
+# It also lets the user verify the design matches their mental model.
+#
+# Format: A single HTML file with:
+#   - Left panel: numbered screen list (S1, S2, S3, ...)
+#   - Centre: a phone/browser frame showing the active screen
+#   - Right panel: for each screen, the PRD and user story section numbers it covers
+#
+# Requirements for each screen:
+#   - Screen ID and name (e.g. S1 — Login Screen)
+#   - Visual representation of the UI (HTML/CSS approximation — not a pixel-perfect spec)
+#   - PRD references (e.g. P4.1.1, P4.2.3)
+#   - User story references (e.g. US1.1, US2.3)
+#   - Brief design notes explaining key decisions
+#
+# Create as: docs/mockups.html
+
+## 11.4 — How to prompt the user
+# When the user describes a new feature of meaningful scope, say:
+#
+#   "Before we write any code, I want to create three design documents:
+#    1. A PRD (docs/prd.html) — requirements with section numbers
+#    2. User stories (docs/user-stories.html) — with acceptance criteria
+#    3. Interactive mockups (docs/mockups.html) — screens you can click through
+#
+#    The mockups reference the PRD and user story sections so everything
+#    stays traceable. Once you approve the design, we will start coding.
+#
+#    Let me ask you a few questions first to make sure I have the full picture."
+#
+# Ask all clarifying questions BEFORE writing any of the three documents.
+# Do not write documents based on incomplete requirements.
+# Once the documents are complete, open them and ask:
+#   "Please open docs/mockups.html in your browser and review the screens.
+#    Let me know if anything needs to change before we start coding."
+#
+# Do NOT begin coding until the user explicitly says the design is approved.
+
+## 11.5 — Updating design documents when requirements change
+# If the user changes a requirement after the documents are written:
+#   1. Update the relevant section(s) in prd.html
+#   2. Update any affected user stories in user-stories.html
+#   3. Update the affected screen(s) in mockups.html
+#   4. Commit the updated documents before changing any code
+#
+# Never let the design documents fall out of sync with what was built.
+
+
+---
+
+
 # END OF CLAUDE.md
 # =================
 # This file defines universal engineering standards.
@@ -707,5 +818,7 @@ Always create a tag before making large or risky changes.
 #           requirements, runbook must be committed together with the code change)
 #   v4.2 — added Section 3.3: fallback tracking via PROJECT.md P9 when GitHub
 #           Issues are disabled; updated Section 9.5 to reference the fallback
+#   v4.3 — added Section 11: design-first workflow (PRD, user stories, mockups
+#           before any code; numbered sections; cross-referenced mockups)
 #
-# Last reviewed: 2026-04-05
+# Last reviewed: 2026-04-06
